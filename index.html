@@ -104,67 +104,7 @@ img {
 </div>
 
 
-<p>RStudio has a number of HTML-enabled libraries that allow for data-enhanced storytelling. Using RMarkdown, code and visualizations can be converted into an interactive HTML document. In this example, we use</p>
-<pre class="r"><code>##Specify packages
-  library(sqldf)</code></pre>
-<pre><code>## Loading required package: gsubfn
-## Loading required package: proto
-## Loading required package: RSQLite
-## Loading required package: DBI</code></pre>
-<pre class="r"><code>    library(dygraphs)
-  library(xts)</code></pre>
-<pre><code>## Loading required package: zoo
-## 
-## Attaching package: &#39;zoo&#39;
-## 
-## The following objects are masked from &#39;package:base&#39;:
-## 
-##     as.Date, as.Date.numeric</code></pre>
-<pre class="r"><code>  library(googleVis)</code></pre>
-<pre><code>## 
-## Welcome to googleVis version 0.5.8
-## 
-## Please read the Google API Terms of Use
-## before you start using the package:
-## https://developers.google.com/terms/
-## 
-## Note, the plot method of googleVis will by default use
-## the standard browser to display its output.
-## 
-## See the googleVis package vignettes for more details,
-## or visit http://github.com/mages/googleVis.
-## 
-## To suppress this message use:
-## suppressPackageStartupMessages(library(googleVis))</code></pre>
-<pre class="r"><code>  op &lt;- options(gvis.plot.tag=&quot;chart&quot;)
 
-##Load in data
-    #setwd(&quot;C:/Users/jcchen2/Desktop/cfpb_chord&quot;)
-  setwd(&quot;/Users/jeffreychen/Google Drive/PIF - Other/013_CFPB_Workshop/raw_data&quot;)
-    data &lt;- read.csv(&quot;Consumer_Complaints.csv&quot;)
-    colnames(data)&lt;-gsub(&quot;\\.&quot;,&quot;&quot;,colnames(data))</code></pre>
-<p>Now, the data will be rolled up by date and product to create a time series.</p>
-<pre class="r"><code>#Process Issue to bank data
-    ts &lt;- sqldf(&quot;SELECT Datereceived, Product as product, count(Datereceived) count
-                   FROM data
-                   GROUP BY Datereceived,product&quot;)</code></pre>
-<pre><code>## Loading required package: tcltk</code></pre>
-<p>The data is in long form. In order to put it into a panel time series, the data needs to be transformed to wide form.</p>
-<pre class="r"><code>    w &lt;- reshape(ts, 
-                 timevar = &quot;product&quot;,
-                 idvar = c(&quot;Datereceived&quot;),
-                 direction = &quot;wide&quot;)
-    
-    colnames(w)&lt;-gsub(&quot;count.&quot;,&quot;&quot;,colnames(w))
-    colnames(w)&lt;-gsub(&quot; &quot;,&quot;_&quot;,colnames(w))  
-  
-  w[is.na(w)]&lt;-0
-  w$Datereceived &lt;- as.Date(w$Datereceived,&quot;%m/%d/%Y&quot;)
-  w&lt;-w[order(w$Datereceived),]
-
-  ##Put data into extensible time series format in order to use the Dygraphs library
-  graph &lt;- as.xts(w,order.by = w$Datereceived)</code></pre>
-<p>The graph is shown here.</p>
 <p><div id="htmlwidget-4978" style="width:672px;height:480px;" class="dygraphs"></div>
 <script type="application/json" data-for="htmlwidget-4978">{ "x": {
  "attrs": {

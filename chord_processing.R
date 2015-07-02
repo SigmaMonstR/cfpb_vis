@@ -4,8 +4,7 @@
 	library(sqldf)
 
 ##Load in data
-	##setwd("C:/Users/jcchen2/Desktop/cfpb_chord")
-  setwd("/Users/jeffreychen/Google Drive/PIF - Other/013_CFPB_Workshop/raw_data")
+	setwd("C:/Users/jcchen2/Desktop/cfpb_chord")
 	data <- read.csv("Consumer_Complaints.csv")
 
 #Checks
@@ -17,6 +16,7 @@
 				   GROUP BY Issue")
 	subset_data <- subset_data[order(-subset_data$count),]
 	subset_data <- subset_data[1:20,]
+	
 
 	chord_data <- sqldf("SELECT Issue as issue, Company as company, count(Issue) count
 				   FROM data
@@ -24,17 +24,25 @@
 	
 	over50 <- merge(chord_data,subset_data,by="issue")
 	over50 <- over50[,1:3]
+	colnames(over50) <- c("issue","company","count")
 
 ##process into Array
 
-	issue_sum <-sqldf("SELECT issue, SUM(count) count
+	#ISSUE LIST
+		issue_sum <-sqldf("SELECT issue, SUM(count) count
 				 FROM over50
 				 GROUP BY issue")
-	issue_sum <- issue_sum[order(-issue_sum$count),]
-	issue <- unique(issue_sum[,1])
+		issue_sum <- issue_sum[order(-issue_sum$count),]
+		issue <- unique(issue_sum[,1])
 
+	#Company List
+		issue_sum <-sqldf("SELECT company, SUM(count) count
+				 FROM over50
+				 GROUP BY company")
 
-	company <- unique(over50[,2])
+		issue_sum <- issue_sum[order(-issue_sum$count),]
+		company <- unique(issue_sum[1:30,1])
+
 
 	#First row
 		value <- NA
